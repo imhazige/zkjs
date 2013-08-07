@@ -71,13 +71,13 @@ if (window.zk) {
 			msie : /msie/.test(userAgent) && !/opera/.test(userAgent),
 			mozilla : /mozilla/.test(userAgent)
 					&& !/(compatible|webkit)/.test(userAgent),
-			chrome:	/chrome/.test(userAgent)
+			chrome : /chrome/.test(userAgent)
 		},
 		get : function(id) {
 			return document.getElementById(id);
 		},
 		setStyle : function(el, styleText) {
-			if (this.browser.msie) {
+			if (this.browser.msie && this.browser.version < 8) {
 				el.style.cssText = styleText;
 			} else {
 				el.setAttribute("style", styleText);
@@ -126,14 +126,14 @@ if (window.zk) {
 			return ncss;
 		},
 		getCss : function(el) {
-			if (this.browser.msie) {
+			if (this.browser.msie && this.browser.version < 8) {
 				return el.getAttribute("className");
 			} else {
 				return el.getAttribute("class");
 			}
 		},
 		setCss : function(el, argCssName) {
-			if (this.browser.msie) {
+			if (this.browser.msie && this.browser.version < 8) {
 				el.setAttribute("className", argCssName);
 			} else {
 				el.setAttribute("class", argCssName);
@@ -141,7 +141,7 @@ if (window.zk) {
 		},
 		clearCss : function(el) {
 			this.setStyle('');
-			if (this.browser.msie) {
+			if (this.browser.msie && this.browser.version < 8) {
 				el.removeAttribute("className");
 			} else {
 				el.removeAttribute("class");
@@ -232,7 +232,7 @@ if (window.zk) {
 		crradio : function(argName, argIsChecked) {
 			var radio;
 
-			if (this.browser.msie) {
+			if (this.browser.msie && this.browser.version < 8) {
 				var text = "<input type=\"radio\" name=\"" + argName
 						+ "\" value=\"checked\" >";
 				radio = document.createElement(text);
@@ -323,8 +323,10 @@ if (window.zk) {
 				x = cw - width;
 			}
 			x = Math.max(0, x);
-//			 zk.log("x : height:document.body.clientWidth" + x +"|" + width + "|" + cw);
-//			 zk.log("y : height:document.body.clientHeight" + y +"|" + height + "|" + ch);
+			// zk.log("x : height:document.body.clientWidth" + x +"|" + width +
+			// "|" + cw);
+			// zk.log("y : height:document.body.clientHeight" + y +"|" + height
+			// + "|" + ch);
 			// top
 			if (y + height > ch) {
 				y = ch - height;
@@ -335,7 +337,7 @@ if (window.zk) {
 				"x" : x,
 				"y" : y
 			}
-		}		
+		}
 	};
 
 	zk.Url = function(argOrginUrl) {
@@ -363,7 +365,7 @@ if (window.zk) {
 				}
 				qs = "&";
 			}
-			
+
 			return url;
 		};
 

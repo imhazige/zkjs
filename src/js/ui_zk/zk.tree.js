@@ -1,17 +1,33 @@
 zk.Tree = function(ops) {
-	var tree=this;
+	var tree = this;
+
+	var defaultTheme = {
+		zk_tree_icon_blank : null,
+		zk_tree_icon_leaf_top : null,
+		zk_tree_icon_leaf : null,
+		zk_tree_icon_twig : null,
+		zk_tree_icon_collapse : null,
+		zk_tree_icon_expand : null,
+		zk_tree_icon_collapse_top : null,
+		zk_tree_icon_expand_top : null,
+		zk_tree_icon_collapse_mid : null,
+		zk_tree_icon_expand_mid : null,
+		zk_tree_icon_collapse_end : null,
+		zk_tree_icon_expand_end : null
+	};
+
 	if (!zk.Tree.SI) {
 		zk.Tree.SI = new Image();
 		zk.Tree.SI.src = zk.Tree.S
 	}
 	var COLOR_SELECT_BG = "highlight";
 
-	labelStyle = ops.labelStyle
+	var labelStyle = ops.labelStyle
 			? labelStyle
 			: "padding:0;margin-left:2;vertical-align:middle;text-align:left;"
 	this.labelStyle = labelStyle;
 	tree.depth = 0;
-	var count = 0,nodes = [];
+	var count = 0, nodes = [];
 
 	// is show line
 	this.showline = ops.showline;
@@ -62,41 +78,58 @@ zk.Tree = function(ops) {
 		if (!isExpandable(srcNode)) {
 			// not expandable
 			if (!tree.showline) {
-				if (srcNode.exIcon) {
-					zk.remove(srcNode.exIcon);
-					return;
-				}
-			}
-			if (isFirstTop(srcNode)) {
-				// is first top,this is special
-				if (isTwig(srcNode)) {
-					// has no sister
-					if (srcNode.exIcon) {
-						strImgkey = 'zk_tree_icon_blank';
-					}
-				} else {
-					strImgkey = 'zk_tree_icon_leaf_top';
-				}
-			} else if (isLeaf(srcNode)) {
-				strImgkey = 'zk_tree_icon_leaf';
+				// if (srcNode.exIcon) {
+				// zk.remove(srcNode.exIcon);
+				// return;
+				// }
+				strImgkey = 'zk_tree_icon_blank';
 			} else {
-				strImgkey = 'zk_tree_icon_twig';
+				if (isFirstTop(srcNode)) {
+					// is first top,this is special
+					if (isTwig(srcNode)) {
+						// has no sister
+						if (srcNode.exIcon) {
+							strImgkey = 'zk_tree_icon_blank';
+						}
+					} else {
+						strImgkey = 'zk_tree_icon_leaf_top';
+					}
+				} else if (isLeaf(srcNode)) {
+					strImgkey = 'zk_tree_icon_leaf';
+				} else {
+					strImgkey = 'zk_tree_icon_twig';
+				}
 			}
 		} else {
 			// need show expand
-			if (isFirstTop(srcNode)) {
-				if (isTwig(srcNode)) {
-					strImgkey = expanded ? "zk_tree_icon_collapse" : "zk_tree_icon_expand";
-				} else {
-					strImgkey = expanded ? "zk_tree_icon_collapse_top" : "zk_tree_icon_expand_top";
-				}
-			} else if (isLeaf(srcNode)) {
-				strImgkey = expanded ? "zk_tree_icon_collapse_mid" : "zk_tree_icon_expand_mid";
+			if (!tree.showline) {
+				strImgkey = expanded?'zk_tree_icon_collapse_noline':'zk_tree_icon_expand_noline';
 			} else {
-				strImgkey = expanded ? "zk_tree_icon_collapse_end" : "zk_tree_icon_expand_end";
+				if (isFirstTop(srcNode)) {
+					if (isTwig(srcNode)) {
+						strImgkey = expanded
+								? "zk_tree_icon_collapse"
+								: "zk_tree_icon_expand";
+					} else {
+						strImgkey = expanded
+								? "zk_tree_icon_collapse_top"
+								: "zk_tree_icon_expand_top";
+					}
+				} else if (isLeaf(srcNode)) {
+					strImgkey = expanded
+							? "zk_tree_icon_collapse_mid"
+							: "zk_tree_icon_expand_mid";
+				} else {
+					strImgkey = expanded
+							? "zk_tree_icon_collapse_end"
+							: "zk_tree_icon_expand_end";
+				}
 			}
 		}
-		if (tree.showline && !srcNode.exIcon) {
+		// if (tree.showline && !srcNode.exIcon) {
+		// srcNode.addExIcon();
+		// }
+		if (!srcNode.exIcon) {
 			srcNode.addExIcon();
 		}
 		if (srcNode.exIcon) {
@@ -116,11 +149,14 @@ zk.Tree = function(ops) {
 	 * setLine :set the "|" line icon
 	 */
 	var setLine = function(srcNode, idx) {
-		if (!tree.showline)
-			return;
+		// if (!tree.showline)
+		// return;
+
 		if (srcNode.hasChild) {
 			for (var i = 0; i < srcNode.children.length; i++) {
-				zk.setCss(srcNode.children[i].lineIcon[idx],'zk_tree_icon_line');
+				zk.setCss(srcNode.children[i].lineIcon[idx], !tree.showline
+								? 'zk_tree_icon_blank'
+								: 'zk_tree_icon_line');
 				setLine(srcNode.children[i], idx);
 			}
 		}
@@ -133,15 +169,27 @@ zk.Tree = function(ops) {
 			tree.selectedNode.label.style.background = tree.selectedNode.label._background;
 			tree.selectedNode.label.style.color = tree.selectedNode.label._color;
 		}
-		srcNode.label._background = srcNode.label.style.background?srcNode.label.style.background:'none';
-		srcNode.label._color = srcNode.label.style.color?srcNode.label.style.color:'black';
+		srcNode.label._background = srcNode.label.style.background
+				? srcNode.label.style.background
+				: 'none';
+		srcNode.label._color = srcNode.label.style.color
+				? srcNode.label.style.color
+				: 'black';
 		srcNode.label.style.background = COLOR_SELECT_BG;
 		srcNode.label.style.color = "highlighttext";
 
 		tree.selectedNode = srcNode;
-		zk.fire(tree,'select');
+		zk.fire(tree, 'select');
 	}
 	this.doSelect = doSelect;
+
+	this.enable = function(enable) {
+		var enable = false !== enable;
+
+		for (var i = 0; i < count; i++) {
+			nodes[i].enable(enable);
+		}
+	};
 
 	var addNode = function(toNode, node) {
 		node.tier = toNode.getTier() + 1;
@@ -164,20 +212,21 @@ zk.Tree = function(ops) {
 		if (tree.depth < node.tier)
 			tree.depth = node.tier;
 		node.container.style.display = node.parent.expanded ? "block" : "none";
-		indent = ops.indent ? ops.indent : 16;
-		if (!tree.showline) {
-			node.body.style.textIndent = indent * (node.tier - 1) + "px";
-		}
+		var indent = ops.indent ? ops.indent : 16;
+		// if (!tree.showline) {
+		// node.body.style.textIndent = indent * (node.tier - 1) + "px";
+		// }
 		// is the branch icon show
-		if (tree.showline) {
-			node.addExIcon();
-		}
+		// if (tree.showline) {
+		// node.addExIcon();
+		// }
 		// set the line
-		if (tree.showline) {
+		if (true) {
+			// if (tree.showline) {
 			for (var i = node.tier - 2; i >= 0; i--) {
 				var img = new Image();
-				img.align="absmiddle";
-				img.src=zk.Tree.S;
+				img.align = "absmiddle";
+				img.src = zk.Tree.S;
 				zk.inade(node.body, "afterBegin", img);
 				node.lineIcon[i] = img;
 			}
@@ -188,7 +237,9 @@ zk.Tree = function(ops) {
 			var i = node.tier - 2;
 			while (n != root && i >= 0) {
 				if (n.next != null) {
-					zk.setCss(node.lineIcon[i], 'zk_tree_icon_line');
+					zk.setCss(node.lineIcon[i], !tree.showline
+									? 'zk_tree_icon_blank'
+									: 'zk_tree_icon_line');
 					// node.lineIcon[i].src=tree.icons["line"].src;
 				}
 				n = n.parent;
@@ -201,17 +252,17 @@ zk.Tree = function(ops) {
 			if (ma.exIcon == null) {
 				// note:the real expand icon is set when add child
 				ma.exIcon = new Image();
-				ma.exIcon.src=zk.Tree.S;
+				ma.exIcon.src = zk.Tree.S;
 				ma.exIcon.align = "absmiddle";
-				zk.on(ma.exIcon,'click',function() {
-					ma.expand();
-				});
+				zk.on(ma.exIcon, 'click', function() {
+							ma.expand();
+						});
 				var o = ma.icon.src == "" ? ma.label : ma.icon;
 				zk.inade(o, "beforeBegin", ma.exIcon);
 			}
 
 			// Joker:
-			tree.setExIcon(ma);			
+			tree.setExIcon(ma);
 		}
 		node.expanded = true;
 		// set the left margin
@@ -227,7 +278,7 @@ zk.Tree = function(ops) {
 			tree.nodes[node.key] = node;
 		}
 		tree.nodes[count] = node;
-		count++;	
+		count++;
 
 		return node;
 	}
@@ -311,7 +362,7 @@ zk.Tree = function(ops) {
 				}
 			}
 
-			//do not forget to remove the obj from the children
+			// do not forget to remove the obj from the children
 			if (ma != root) {
 				ma.children.removeo(srcNode);
 				if (ma.children.length < 1) {
@@ -434,10 +485,10 @@ zk.Tree = function(ops) {
 
 	this.count = function() {
 		return count;
-	}	
+	}
 	this.root = root;
-	this.nodes = nodes;	
-	
+	this.nodes = nodes;
+
 	zk.inade(ops.to, 'afterBegin', tree.body);
 }
 

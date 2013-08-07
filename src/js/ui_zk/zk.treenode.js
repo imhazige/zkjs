@@ -81,8 +81,17 @@ zk.TreeNode = function(ops) {
 
 	// Joker:all add param node
 	node.select = function() {
+		if (!node.isEnable()){
+			return;
+		}
 		tree.doSelect(node);
-	}
+	};
+	node.enable = function(enable){
+		node.disabled = false === enable;
+	};
+	node.isEnable= function(){
+		return !node.disabled;
+	};
 	node.isVisible = function() {
 		var str;
 
@@ -225,19 +234,25 @@ zk.TreeNode = function(ops) {
 	 * @param _argFireEvent
 	 *            if fire the oncheck event
 	 */
-	node.setChecked = function(_argChecked, _argsetChild) {
+	node.setChecked = function(_argChecked, _argsetChild , _argFireEvent) {
 		if (zk.Tree.CHECKBOX != node.type) {
 			return;
 		}
+		if (_argFireEvent){
+			
+		}
+		
 		// Joker:care this check
 		// is necessary or it will cause infinitude recursion
 		if (node.checkBox.checked != _argChecked) {
 			node.checked = node.checkBox.checked = _argChecked;
-			zk.fire(node, 'click');
+			if (_argFireEvent){
+				zk.fire(node, 'click');
+			}
 		}
 		if (_argsetChild) {
 			for (var i = 0; i < node.getChildrenCount(); i++) {
-				node.children[i].setChecked(_argChecked, true);
+				node.children[i].setChecked(_argChecked, true,_argFireEvent);
 			}
 		}
 	};

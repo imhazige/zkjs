@@ -54,3 +54,21 @@
 	background-image: url("../images/tree/file.gif");
 	background-position: 2px 0px
 }
+
+.zk_tree_icon_folder {	
+	background-image: url("../images/tree/folder.gif");
+	background-position: 2px 0px
+}
+
+.zk_tree_icon_folderopen {	
+	background-image: url("../images/tree/folderopen.gif");
+	background-position: 2px 0px
+}
+
+.zk_tree_icon_collapse_noline{
+	background: url("../images/tree/arrows.gif") no-repeat scroll -16px 0 transparent;
+}
+
+.zk_tree_icon_expand_noline{
+	background: url("../images/tree/arrows.gif") no-repeat scroll 0 0 transparent;
+}
