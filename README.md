@@ -11,4 +11,4 @@ These components is for the good of ajax, they are event-driven, all this work f
 
 ==============================================
 
-This is an old project developed before jquery firtt release. Now I think the only useful component is the tree, so I clean it up and create a new project for the tree only https://imhazige.github.io/kee-tree/
+This is an old project developed before the first release of jQuery. Now I think the only useful component is the tree, so I clean it up and create a new project for the tree only https://imhazige.github.io/kee-tree/
