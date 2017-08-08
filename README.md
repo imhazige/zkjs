@@ -2,7 +2,7 @@
 Automatically exported from code.google.com/p/zkjs
 
 
-live demo link: http://kazge.com/show/zkjs/src/
+live demo link: http://imhazige.github.io/zkjs/
 
 Zkjs is a opensource project that contains serveral Javascript components:
 
